@@ -37,8 +37,7 @@ function count_same(count::T, change) where {T <: Number}
     end
 end
 
-function count_same(v::AbstractVector)
-    changes = check_changes(v)
+function count_same(changes::BitArray)
     res = accumulate(count_same,changes;init=0)
     return res
 end
@@ -59,8 +58,7 @@ function count_different(count::T, change) where {T <: Number}
     end
 end
 
-function count_different(v::AbstractVector)
-    changes = check_changes(v)
+function count_different(changes::BitArray)
     res = accumulate(count_different,changes;init=1)
     return res
 end

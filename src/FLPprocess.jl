@@ -14,8 +14,9 @@ Pokes doesn't process anymore the file name to extract name etc, move this to pr
 include("utilities.jl")
 include("create_DataIndex.jl")
 include("process_pokes.jl")
+include("process_bouts.jl")
 
 export check_changes, count_same, count_different
-export get_DataIndex, process_pokes
+export get_DataIndex, process_pokes, process_bouts
 
 end # module

@@ -6,9 +6,16 @@ using OrderedCollections
 using ShiftedArrays
 using CSV
 
+#=
+Remember to:
+Pokes doesn't process anymore the file name to extract name etc, move this to process session
+=#
 
+include("utilities.jl")
 include("create_DataIndex.jl")
+include("process_pokes.jl")
 
-export get_DataIndex
+export check_changes, count_same, count_different
+export get_DataIndex, process_pokes
 
 end # module

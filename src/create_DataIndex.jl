@@ -14,16 +14,29 @@ function get_data(dir; mouse_tag = nothing)
 end
 
 """
-    get_DataIndex(dir::String; mouse_tag = nothing)
+    get_DataIndex(dir::String; mouse_tag = nothing, exp_name = nothing)
 
 Read and filters files in directory `dir` using `get_data` and extract informations from the filename in a DataFrame.
-Ir returns a DataFrame with MouseID, Day, DailyTurn, Session, File path
+Ir returns a DataFrame with File path, Session, MouseID, Day, DailyTurn, Destination. The Destination folder of the processed files
+is named Results followed by the current date inside `dir`. If an experiment name is provided the Results folder will be created in a folder named
+`exp_name` located in the parent folder of `dir`.
 """
-function get_DataIndex(dir; mouse_tag = nothing)
+function get_DataIndex(dir; mouse_tag = nothing, exp_name = nothing)
     f = get_data(dir;mouse_tag = mouse_tag)
     DataIndex = DataFrame(Path = joinpath.(dir,f), Session = replace.(f, ".csv"=>""))
     DataIndex.MouseID = [match(r"[a-zA-Z]{1,2}\d{1,2}",file).match for file in f]
     DataIndex.Day = Date.(["20" * match(r"\d{6}",file).match for file in f], "yyyymmdd")
     DataIndex.Turn = [file[end] for file in DataIndex.Session]
+    results_dir = "Results_" * string(today())
+    if exp_name != nothing
+        parent_dir = replace(dir,basename(dir)=>"")
+        destination_dir = joinpath(parent_dir,exp_name,results_dir)
+    else
+        destination_dir = joinpath(dir, results_dir)
+    end
+    if !isdirpath(destination_dir)
+        mkpath(destination_dir)
+    end
+    DataIndex.Destination = joinpath.(destination_dir,DataIndex.Session .* "csv")
     return DataIndex
 end

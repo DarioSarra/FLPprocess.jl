@@ -98,3 +98,32 @@ function gen(mouse::AbstractString; dir = joinpath(dirname(@__DIR__), "genotypes
     end
     genotype
 end
+
+"""
+    set_results_dir(path::AbstractString; exp_name = nothing)
+
+Given a `path` create a directory where to store results of raw data processing.
+The  destination folder is named Results followed by the current date inside `dir`.
+If `path` is a file the Results folder will be created in its parent directory.
+If an experiment name is provided the Results folder will be created in a folder named`exp_name` located in the parent folder 1 level above.
+"""
+function set_results_dir(path::AbstractString; exp_name = nothing)
+    if isfile(path)
+        dir = dirname(path)
+    elseif isdir(path)
+        dir = path
+    else
+        error("couldn't resolve path destination")
+    end
+    results_dir = "Results_" * string(today())
+    if exp_name != nothing
+        parent_dir = dirname(dir)
+        destination_dir = joinpath(parent_dir,exp_name,results_dir)
+    else
+        destination_dir = joinpath(dir, results_dir)
+    end
+    if !isdirpath(destination_dir)
+        mkpath(destination_dir)
+    end
+    return destination_dir
+end

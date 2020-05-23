@@ -6,8 +6,8 @@ A poking streak ends when the animal changes side. For photometry data a set of 
 """
 
 function process_streaks(df::AbstractDataFrame; photometry = false)
-    # dayly_vars_list = [:MouseID, :Gen, :Drug, :Day, :Daily_Session, :Box, :Stim_Day, :Condition, :ExpDay, :Area, :Session];
-    fixed_values = [:Stim, :StimFreq, :Wall, :Protocol, :CorrectStart, :Block, :StreakInBlock, :Side, :ReverseStreak]
+    vals_per_streak = [:Stim, :StimFreq, :Wall, :Protocol, :CorrectStart, :Block, :StreakInBlock, :Side, :ReverseStreak]
+    vals_per_day = [:Box,:StimDay];
     booleans=[:Reward,:Stim,:Wall,:Correct,:StimDay]#columns to convert to Bool
     for x in booleans
         df[!,x] = eltype(df[!,x]) == Bool ? df[!,x] : occursin.("true",df[!,x],)
@@ -26,11 +26,13 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         PostInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PostInterpoke])) : missing,
         Correct_leave = !dd[end,:Correct]
         )
-        for s in fixed_values
-            if s in propertynames(dd)
-                dt[!,s] .= dd[1, s]
+
+        for v in vals_per_streak
+            if v in propertynames(dd)
+                dt[!,v] .= dd[1, v]
             end
         end
+
         return dt
     end
     streak_table[!,:Prev_Reward] = [x .== nothing ? 0 : x for x in streak_table[:,:Prev_Reward]]
@@ -38,6 +40,13 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
     streak_table[!,:BeforeLast] = streak_table[!,:Last_Reward] .- streak_table[!,:Prev_Reward].-1;
     prov = lead(streak_table[!,:Start],default = 0.0) .- streak_table[!,:Stop];
     streak_table[!,:Travel_to] = [x.< 0 ? 0 : x for x in prov]
+
+    for v in vals_per_day
+        if v in propertynames(df)
+            streak_table[!,v] .= df[1, v]
+        end
+    end
+
     # for photometry datas a set of indexes are extracted to allign the data in the pokes dataframe
     # This indexes are to be reported in the streaks dataframe as well
     if photometry

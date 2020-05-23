@@ -24,6 +24,9 @@ function process_dataset(DataIndex::AbstractDataFrame; exp_name = nothing)
             append!(streaks, s)
         end
     end
+    add_calendars!(pokes)
+    add_calendars!(bouts)
+    add_calendars!(streaks)
     for (n,d) in zip(["pokes.csv","bouts.csv", "streaks.csv"], [pokes,bouts,streaks])
         filename = joinpath(destination_dir,n)
         CSV.write(filename,d)

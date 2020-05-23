@@ -127,3 +127,53 @@ function set_results_dir(path::AbstractString; exp_name = nothing)
     end
     return destination_dir
 end
+
+"""
+    exp_calendar(df::AbstractDataFrame)
+
+Given a pokes, bouts or streaks DataFrame `df` uses Day variable to count consecutive days of experiment for each animals.
+Add a new column storing the values
+"""
+
+function exp_calendar!(df::AbstractDataFrame)
+    df[!,:ExpDay] = Vector{Int64}(undef,nrow(df))
+    combine(groupby(df,:MouseID)) do dd
+        ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(dd.Day))))
+        dd.ExpDay = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
+    end
+    return df
+end
+
+"""
+    conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
+
+Given a pokes, bouts or streaks DataFrame `df` uses ExpDay variable to count consecutive days of the same value specified by `condition` for each animals
+Add a new column storing the values
+"""
+
+function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
+    gd = groupby(df,[:MouseID, :ExpDay])
+    synthesis = combine([condition,:Session] => (p,s) ->
+            (
+                Flexi = length(union(p)) > 1,
+                Protocol = join(union(p),"*"),
+                Session = s[1]
+            )
+        ,gd)
+    conditionDay = Symbol(string(condition)*"Day")
+    synthesis[:,conditionDay] = count_same(check_changes(synthesis[:,condition]))
+    condition_dict = Dict(session => day for (session,day) in zip(synthesis[:,:Session],synthesis[:,conditionDay]))
+    df[!,conditionDay] = [get(condition_dict,x,Date(2000,12,31)) for x in df.Session]
+    return df
+end
+
+"""
+    add_calendars!(df::AbstractDataFrame)
+
+Given a pokes, bouts or streaks DataFrame `df` adds variables abut Experiment Day and consecutive Protocol Day for each animals
+"""
+
+function add_calendars!(df::AbstractDataFrame)
+    exp_calendar!(df)
+    conditional_calendar!(df,:Protocol)
+end

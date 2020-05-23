@@ -48,13 +48,6 @@ function process_pokes(filepath::String)
         df[!,:Protocol] = string.(df[!,:Prwd],'/',df[!,:Ptrs])
         df[!,:Box] = "Box".*string.(df[:,:Box])
     end
-    # mouse, day, daily_session, session = session_info(filepath)
-    # df[!,:MouseID] .= mouse
-    # df[!,:Day] .= parse(Int64,day)
-    # df[!,:Daily_Session] .= daily_session
-    # df[!,:Session] .= session
-    # df[!,:Gen] = Flipping.gen.(df[:,:MouseID])
-    # df[!,:Drug] = Flipping.pharm.(df[:,:Day])
     df[!,:StimDay] .= length(findall(df[:,:Stim])) == 0 ? false : true
     df[!,:Leave] = lead(check_changes(df[:,:Side]), default = false)
     df[!,:Bout] = count_different(df.Reward .| check_changes(df.Side))

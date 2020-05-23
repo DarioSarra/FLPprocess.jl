@@ -19,7 +19,6 @@ include("process_streaks.jl")
 include("process_session.jl")
 include("process_dataset.jl")
 
-export check_changes, count_same, count_different, exp_calendar!, conditional_calendar!
 export get_DataIndex, process_pokes, process_bouts, process_streaks, process_session, process_dataset
 
 end # module

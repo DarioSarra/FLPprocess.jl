@@ -78,3 +78,23 @@ function nextcount(count::T, rewarded) where {T <: Number}
 end
 signedcount(v::AbstractArray{Bool}) = accumulate(nextcount, v;init = 0)
 get_hierarchy(v) = lag(signedcount(v), default = 0)
+
+"""
+    gen(mouse::String; dir = joinpath(dirname(@__DIR__), "genotypes"))
+
+Given an animal name `mouse` look in the genotypes folder for a match.
+Returns a string indicating the genotype if a match is found otherwise `missing`
+"""
+function gen(mouse::AbstractString; dir = joinpath(dirname(@__DIR__), "genotypes"))
+    genotype = "missing"
+    for file in readdir(dir)
+        if endswith(file, ".csv")
+            df = CSV.read(joinpath(dir, file)) |> DataFrame
+            n = names(df)[1]
+            if mouse in df[!,n]
+                genotype = string(n)
+            end
+        end
+    end
+    genotype
+end

@@ -55,32 +55,32 @@ function process_pokes(filepath::String)
     # df[!,:Session] .= session
     # df[!,:Gen] = Flipping.gen.(df[:,:MouseID])
     # df[!,:Drug] = Flipping.pharm.(df[:,:Day])
-    df[!,:Stim_Day] .= length(findall(df[:,:Stim])) == 0 ? false : true
+    df[!,:StimDay] .= length(findall(df[:,:Stim])) == 0 ? false : true
     df[!,:Leave] = lead(check_changes(df[:,:Side]), default = false)
     df[!,:Bout] = count_different(df.Reward .| check_changes(df.Side))
     df[!,:Streak] = count_different(check_changes(df[:,:Side]))
     df[!,:ReverseStreak] = reverse(df[:,:Streak])
-    df[!,:Poke_within_Streak] .= 0
-    df[!,:Poke_Hierarchy] .= 0.0
-    df[!,:Poke_within_Streak] = Vector{Union{Float64,Missing}}(undef,size(df,1))
-    df[!,:Pre_Interpoke] = Vector{Union{Float64,Missing}}(undef,size(df,1))
-    df[!,:Post_Interpoke] = Vector{Union{Float64,Missing}}(undef,size(df,1))
+    df[!,:PokeInStreak] .= 0
+    df[!,:PokeHierarchy] .= 0.0
+    df[!,:PokeInStreak] = Vector{Union{Float64,Missing}}(undef,size(df,1))
+    df[!,:PreInterpoke] = Vector{Union{Float64,Missing}}(undef,size(df,1))
+    df[!,:PostInterpoke] = Vector{Union{Float64,Missing}}(undef,size(df,1))
     combine(groupby(df,:Streak)) do dd
-        dd[:,:Poke_within_Streak] = count_different(check_changes(dd[!,:Poke]))
-        dd[:,:Pre_Interpoke] =  dd[!,:PokeIn] .-lag(dd[!,:PokeOut],default = missing)
-        dd[:,:Post_Interpoke] = lead(dd[!,:PokeIn],default = missing).- dd[!,:PokeOut]
-        dd[:,:Poke_Hierarchy] = get_hierarchy(dd[!,:Reward])
+        dd[:,:PokeInStreak] = count_different(check_changes(dd[!,:Poke]))
+        dd[:,:PreInterpoke] =  dd[!,:PokeIn] .-lag(dd[!,:PokeOut],default = missing)
+        dd[:,:PostInterpoke] = lead(dd[!,:PokeIn],default = missing).- dd[!,:PokeOut]
+        dd[:,:PokeHierarchy] = get_hierarchy(dd[!,:Reward])
     end
     df[!,:Block] = count_different(check_changes(df[!,:Wall]))
-    df[!,:Streak_within_Block] .= 0
+    df[!,:StreakInBlock] .= 0
     combine(groupby(df,:Block)) do dd
-        dd[:,:Streak_within_Block] = count_different(check_changes(dd[!,:Side]))
+        dd[:,:StreakInBlock] = count_different(check_changes(dd[!,:Side]))
     end
     df[!,:SideHigh] = [x ? "L" : "R" for x in df[!,:SideHigh]]
     df[!,:Correct] = df[!,:Side] .== df[!,:SideHigh]
     return df[:, [:Poke,:Side,:SideHigh, :Correct,
-    :Reward, :Poke_Hierarchy, :Poke_within_Streak,
-    :Leave, :Bout, :Streak, :Stim, :StimFreq, :Wall, :Block, :Streak_within_Block,
-    :Delta, :Protocol, :Box, :Stim_Day,
-    :PokeIn, :PokeOut, :PokeDur, :Pre_Interpoke, :Post_Interpoke,:ReverseStreak]]
+    :Reward, :PokeHierarchy, :PokeInStreak,
+    :Leave, :Bout, :Streak, :Stim, :StimFreq, :Wall, :Block, :StreakInBlock,
+    :Delta, :Protocol, :Box, :StimDay,
+    :PokeIn, :PokeOut, :PokeDur, :PreInterpoke, :PostInterpoke,:ReverseStreak]]
 end

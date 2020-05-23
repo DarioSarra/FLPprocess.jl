@@ -1,5 +1,10 @@
+"""
+    process_bouts(df::AbstractDataFrame)
 
-function process_bouts(p::DataFrames.AbstractDataFrame)
+Take as input a processed pokes datafame `df` of 1 single session and returns a dataframe were each row are information about a poking bout.
+A poking bout ends either when a reward occurs or the animal changes side
+"""
+function process_bouts(df::AbstractDataFrame)
     dayly_vars_list = [:Box,:Protocol,:Stim_Day];
     bout_table = combine(groupby(df, :Bout)) do dd
         dt = DataFrame(
@@ -9,12 +14,12 @@ function process_bouts(p::DataFrames.AbstractDataFrame)
         Side = dd[1,:Side],
         Stim = dd[1,:Stim],
         Trial_duration = (dd[end,:PokeOut]-dd[1,:PokeIn]),
-        Pre_Interpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:Pre_Interpoke])) : missing,
-        Post_Interpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:Post_Interpoke])) : missing,
+        PreInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PreInterpoke])) : missing,
+        PostInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PostInterpoke])) : missing,
         Wall = dd[1,:Wall],
         Correct_start = dd[1,:Correct],
         Block = dd[1,:Block],
-        Streak_within_Block = dd[1,:Streak_within_Block],
+        StreakInBlock = dd[1,:StreakInBlock],
         Streak = dd[1,:Streak],
         ReverseStreak = dd[1,:ReverseStreak]
         )

@@ -8,7 +8,7 @@
 [![Coveralls](https://coveralls.io/repos/github/DarioSarra/FLPprocess.jl/badge.svg?branch=master)](https://coveralls.io/github/DarioSarra/FLPprocess.jl?branch=master)
 [![Build Status](https://api.cirrus-ci.com/github/DarioSarra/FLPprocess.jl.svg)](https://cirrus-ci.com/github/DarioSarra/FLPprocess.jl)
 
-Raw data search and processing tools for the [Flipping Task](https://doi.org/10.1016/j.neuron.2020.01.017) in the [Systems Neuroscience lab][https://www.fchampalimaud.org/researchfc/groups/grupo-systems-neuroscience] at the Champalimaud Foundation, Portugal.
+Raw data search and processing tools for the [Flipping Task](https://doi.org/10.1016/j.neuron.2020.01.017) in the [Systems Neuroscience lab](https://www.fchampalimaud.org/researchfc/groups/grupo-systems-neuroscience) at the Champalimaud Foundation, Portugal.
 
 ## Usage
 

@@ -5,7 +5,7 @@ Take as input a processed pokes datafame `df` of 1 single session and returns a 
 A poking bout ends either when a reward occurs or the animal changes side
 """
 function process_bouts(df::AbstractDataFrame)
-    vals_per_bout = [:Stim, :StimFreq, :Wall, :Protocol, :CorrectStart, :Block, :StreakInBlock, :Side, :ReverseStreak]
+    vals_per_bout = [:Stim, :StimFreq, :Wall, :Protocol, :Block, :StreakInBlock, :Side, :ReverseStreak]
     vals_per_day = [:Box,:StimDay];
     bout_table = combine(groupby(df, :Bout)) do dd
         dt = DataFrame(
@@ -22,7 +22,9 @@ function process_bouts(df::AbstractDataFrame)
         Block = dd[1,:Block],
         StreakInBlock = dd[1,:StreakInBlock],
         Streak = dd[1,:Streak],
-        ReverseStreak = dd[1,:ReverseStreak]
+        ReverseStreak = dd[1,:ReverseStreak],
+        CorrectStart = dd[1,:Correct],
+        CorrectLeave = !dd[end,:Correct]
         )
 
 

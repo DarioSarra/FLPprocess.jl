@@ -19,7 +19,7 @@ function process_pokes(filepath::String)
     df[!,:PokeOut] = df[!,:PokeOut] .- start_time
     df[!,:PokeDur] = df[!,:PokeOut] - df[!,:PokeIn]
     if !iscolumn(df,:Wall)
-        df[:Wall] = zeros(size(df,1))
+        df[:,:Wall] = zeros(size(df,1))
     end
     booleans=[:Reward,:Side,:SideHigh,:Stim,:Wall]#columns to convert to Bool
     for x in booleans

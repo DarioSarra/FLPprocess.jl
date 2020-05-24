@@ -156,10 +156,11 @@ function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
     synthesis = combine([condition,:Session] => (p,s) ->
             (
                 Flexi = length(union(p)) > 1,
-                Protocol = join(union(p),"*"),
+                Condition = join(union(p),"*"),
                 Session = s[1]
             )
         ,gd)
+    rename!(synthesis,:Condition => condition)
     conditionSession = Symbol(string(condition)*"Session")
     synthesis[:,conditionSession] = count_same(check_changes(synthesis[:,condition]))
     condition_dict = Dict(session => day for (session,day) in zip(synthesis[:,:Session],synthesis[:,conditionSession]))

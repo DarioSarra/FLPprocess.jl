@@ -136,10 +136,10 @@ Add a new column storing the values
 """
 
 function exp_calendar!(df::AbstractDataFrame)
-    df[!,:ExpDay] = Vector{Int64}(undef,nrow(df))
+    df[!,:ExpSession] = Vector{Int64}(undef,nrow(df))
     combine(groupby(df,:MouseID)) do dd
-        ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(dd.Day))))
-        dd[:,:ExpDay] = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
+        ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(dd.Session))))
+        dd[:,:ExpSession] = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
     end
     return df
 end
@@ -152,7 +152,7 @@ Add a new column storing the values
 """
 
 function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
-    gd = groupby(df,[:MouseID, :ExpDay])
+    gd = groupby(df,[:MouseID, :ExpSession])
     synthesis = combine([condition,:Session] => (p,s) ->
             (
                 Flexi = length(union(p)) > 1,
@@ -160,10 +160,10 @@ function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
                 Session = s[1]
             )
         ,gd)
-    conditionDay = Symbol(string(condition)*"Day")
+    conditionSession = Symbol(string(condition)*"Session")
     synthesis[:,conditionDay] = count_same(check_changes(synthesis[:,condition]))
     condition_dict = Dict(session => day for (session,day) in zip(synthesis[:,:Session],synthesis[:,conditionDay]))
-    df[!,conditionDay] = [get(condition_dict,x,Date(2000,12,31)) for x in df.Session]
+    df[!,conditionSession] = [get(condition_dict,x,Date(2000,12,31)) for x in df.Session]
     return df
 end
 

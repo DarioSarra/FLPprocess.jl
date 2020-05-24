@@ -139,7 +139,7 @@ function exp_calendar!(df::AbstractDataFrame)
     df[!,:ExpSession] = Vector{Int64}(undef,nrow(df))
     combine(groupby(df,:MouseID)) do dd
         ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(dd.Session))))
-        dd[:,:ExpSession] = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
+        dd[:,:ExpSession] = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Session]
     end
     return df
 end
@@ -161,8 +161,8 @@ function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
             )
         ,gd)
     conditionSession = Symbol(string(condition)*"Session")
-    synthesis[:,conditionDay] = count_same(check_changes(synthesis[:,condition]))
-    condition_dict = Dict(session => day for (session,day) in zip(synthesis[:,:Session],synthesis[:,conditionDay]))
+    synthesis[:,conditionSession] = count_same(check_changes(synthesis[:,condition]))
+    condition_dict = Dict(session => day for (session,day) in zip(synthesis[:,:Session],synthesis[:,conditionSession]))
     df[!,conditionSession] = [get(condition_dict,x,Date(2000,12,31)) for x in df.Session]
     return df
 end

@@ -16,7 +16,7 @@ Raw data search and processing tools for the [Flipping Task](https://doi.org/10.
 The main process function is
 
 ```
-process_dataset(dir::String; mouse_tag = nothing, exp_name = nothing)
+DataIndex, Pokes, Bouts, Streaks = process_dataset(dir::String; mouse_tag = nothing, exp_name = nothing)
 ```
 
 Process pokes, bouts and streaks dataframes for all data raw data found in the

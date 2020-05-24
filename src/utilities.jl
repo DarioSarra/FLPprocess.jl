@@ -139,7 +139,7 @@ function exp_calendar!(df::AbstractDataFrame)
     df[!,:ExpDay] = Vector{Int64}(undef,nrow(df))
     combine(groupby(df,:MouseID)) do dd
         ExpCalendar = Dict(d => n for (n,d) in enumerate(sort(union(dd.Day))))
-        dd.ExpDay = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
+        dd[:,:ExpDay] = [get(ExpCalendar,x,Date(2000,12,31)) for x in dd.Day]
     end
     return df
 end

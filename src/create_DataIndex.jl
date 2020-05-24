@@ -14,7 +14,7 @@ function get_data(dir; mouse_tag = nothing)
 end
 
 """
-    get_DataIndex(dir::String; mouse_tag = nothing, exp_name = nothing)
+    get_DataIndex(dir::String; mouse_tag = nothing)
 
 Read and filters files in directory `dir` using `get_data` and extract informations from the filename in a DataFrame.
 It returns a DataFrame with File path, Session, MouseID, Day, Turn.

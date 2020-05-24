@@ -6,7 +6,7 @@ A poking streak ends when the animal changes side. For photometry data a set of 
 """
 
 function process_streaks(df::AbstractDataFrame; photometry = false)
-    vals_per_streak = [:Stim, :StimFreq, :Wall, :Protocol, :CorrectStart, :Block, :StreakInBlock, :Side, :ReverseStreak]
+    vals_per_streak = [:Stim, :StimFreq, :Wall, :Protocol, :Block, :StreakInBlock, :Side, :ReverseStreak]
     vals_per_day = [:Box,:StimDay];
     booleans=[:Reward,:Stim,:Wall,:Correct,:StimDay]#columns to convert to Bool
     for x in booleans
@@ -24,7 +24,8 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         Stop = (dd[end,:PokeOut]),
         PreInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PreInterpoke])) : missing,
         PostInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PostInterpoke])) : missing,
-        Correct_leave = !dd[end,:Correct]
+        CorrectStart = dd[1,:Correct]
+        CorrectLeave = !dd[end,:Correct]
         )
 
         for v in vals_per_streak

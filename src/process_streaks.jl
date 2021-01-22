@@ -10,7 +10,7 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
     vals_per_day = [:Box,:StimDay];
     booleans=[:Reward,:Stim,:Wall,:Correct,:StimDay]#columns to convert to Bool
     for x in booleans
-        df[!,x] = eltype(df[!,x]) == Bool ? df[!,x] : occursin.("true",df[!,x],)
+        df[:,x] = eltype(df[:,x]) == Bool ? df[:,x] : occursin.("true",df[:,x],)
     end
     streak_table = combine(groupby(df, :Streak)) do dd
         dt = DataFrame(

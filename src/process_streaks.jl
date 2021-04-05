@@ -22,6 +22,7 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         Last_Reward = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findlast(dd[!,:Reward] .== 1),
         Prev_Reward = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findprev(dd[!,:Reward] .==1, findlast(dd[!,:Reward] .==1)-1),
         Trial_duration = (dd[end,:PokeOut]-dd[1,:PokeIn]),
+        Poking_time = sum(dd.PokeDur),
         Start = (dd[1,:PokeIn]),
         Stop = (dd[end,:PokeOut]),
         PreInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PreInterpoke])) : missing,

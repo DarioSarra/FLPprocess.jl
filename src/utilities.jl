@@ -153,13 +153,18 @@ Add a new column storing the values
 
 function conditional_calendar!(df::AbstractDataFrame,condition::Symbol)
     gd = groupby(df,[:MouseID, :Session])
-    synthesis = combine([condition,:Session] => (p,s) ->
-            (
-                Flexi = length(union(p)) > 1,
-                Condition = join(union(p),"*"),
-                Session = s[1]
-            )
-        ,gd)
+    # synthesis = combine([condition,:Session] => (p,s) ->
+    #         (
+    #             Flexi = length(union(p)) > 1,
+    #             Condition = join(union(p),"*"),
+    #             Session = s[1]
+    #         )
+    #     ,gd)
+    synthesis = combine(groupby(df,[:MouseID, :Session])) do dd
+        (Flexi = length(union(dd[:,condition])) > 1,
+        Condition = join(union(dd[:,condition]),"*"),
+        Session = dd[1, :Session])
+    end
     rename!(synthesis,:Condition => condition)
     conditionSession = Symbol(string(condition)*"Session")
 

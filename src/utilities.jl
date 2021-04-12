@@ -89,7 +89,7 @@ function gen(mouse::AbstractString; dir = joinpath(dirname(@__DIR__), "genotypes
     genotype = "missing"
     for file in readdir(dir)
         if endswith(file, ".csv")
-            df = CSV.read(joinpath(dir, file)) |> DataFrame
+            df = CSV.read(joinpath(dir, file), DataFrame)
             n = names(df)[1]
             if mouse in df[!,n]
                 genotype = string(n)

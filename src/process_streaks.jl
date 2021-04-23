@@ -15,7 +15,7 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         end
     end
     streak_table = combine(groupby(df, :Streak)) do dd
-        lr_idx = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findlast(dd[!,:Reward] .== 1),
+        lr_idx = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findlast(dd[!,:Reward] .== 1)
         dt = DataFrame(
         Num_pokes = size(dd,1),
         Num_Rewards = length(findall(dd[!,:Reward].==1)),

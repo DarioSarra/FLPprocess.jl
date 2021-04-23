@@ -15,13 +15,15 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         end
     end
     streak_table = combine(groupby(df, :Streak)) do dd
+        lr_idx = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findlast(dd[!,:Reward] .== 1),
         dt = DataFrame(
         Num_pokes = size(dd,1),
         Num_Rewards = length(findall(dd[!,:Reward].==1)),
         Start_Reward = dd[1,:Reward],
-        Last_Reward = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findlast(dd[!,:Reward] .== 1),
+        Last_Reward = lr_idx,
+        Last_Reward_Time = lr_idx == 0 ? dd[1,:PokeOut] : dd[lr_idx,:PokeOut],
         Prev_Reward = findlast(dd[!,:Reward] .== 1).== nothing ? 0 : findprev(dd[!,:Reward] .==1, findlast(dd[!,:Reward] .==1)-1),
-        Trial_duration = (dd[end,:PokeOut]-dd[1,:PokeIn]),
+        Trial_Duration = (dd[end,:PokeOut]-dd[1,:PokeIn]),
         Poking_time = sum(dd.PokeDur),
         Start = (dd[1,:PokeIn]),
         Stop = (dd[end,:PokeOut]),
@@ -41,6 +43,7 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
     end
     streak_table[!,:Prev_Reward] = [x .== nothing ? 0 : x for x in streak_table[:,:Prev_Reward]]
     streak_table[!,:AfterLast] = streak_table[!,:Num_pokes] .- streak_table[!,:Last_Reward];
+    streak_table[!,:AfterLast_Duration] = streak_table[!,:Trial_Duration] .- streak_table[!,:Last_Reward_Time];
     streak_table[!,:BeforeLast] = streak_table[!,:Last_Reward] .- streak_table[!,:Prev_Reward].-1;
     prov = lead(streak_table[!,:Start],default = 0.0) .- streak_table[!,:Stop];
     streak_table[!,:Travel_to] = [x.< 0 ? 0 : x for x in prov]

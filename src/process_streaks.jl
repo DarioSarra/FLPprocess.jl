@@ -24,8 +24,7 @@ function process_streaks(df::AbstractDataFrame; photometry = false)
         Stop = (dd[end,:PokeOut]),
         PreInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PreInterpoke])) : missing,
         PostInterpoke = size(dd,1) > 1 ? maximum(skipmissing(dd[!,:PostInterpoke])) : missing,
-        CorrectStart = dd[1,:Correct],
-        CorrectLeave = !dd[end,:Correct]
+        CorrectStart = dd[1,:Correct]
         )
 
         for v in vals_per_streak

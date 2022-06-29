@@ -23,8 +23,7 @@ function process_bouts(df::AbstractDataFrame)
         StreakInBlock = dd[1,:StreakInBlock],
         Streak = dd[1,:Streak],
         ReverseStreak = dd[1,:ReverseStreak],
-        CorrectStart = dd[1,:Correct],
-        CorrectLeave = !dd[end,:Correct]
+        CorrectStart = dd[1,:Correct]
         )
 
 

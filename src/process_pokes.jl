@@ -6,7 +6,7 @@ collect over the year it checks the presence of a set of preexisting column
 """
 
 function process_pokes(filepath::String)
-    df = CSV.read(filepath) |> DataFrame
+    df = CSV.read(filepath, DataFrame)
     if !iscolumn(df,:Poke)
         DataFrames.rename!(df, propertynames(df)[1] => :Poke) #change poke counter name
     end
